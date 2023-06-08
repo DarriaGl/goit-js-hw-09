@@ -30,9 +30,17 @@ const secondsElement = document.querySelector('[data-seconds]');
 let intervalId;
 
 function startTimer(endTime) {
+  clearInterval(intervalId);
+  const currentTime = new Date();
+  if (endTime <= currentTime) {
+    Notiflix.Notify.warning('Please choose a valid date in the future');
+    return;
+  }
+
+  startBtn.disabled = true;
+
   intervalId = setInterval(() => {
-    const currentTime = new Date();
-    const timeDifference = endTime - currentTime;
+    const timeDifference = endTime - new Date();
 
     if (timeDifference <= 0) {
       clearInterval(intervalId);
@@ -62,16 +70,12 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
+
 startBtn.addEventListener('click', () => {
   const selectedDate = flatpickr('#datetime-picker').selectedDates[0];
-  if (!selectedDate || selectedDate < new Date()) {
-    Notiflix.Notify.warning('Please choose a valid date in the future');
-    return;
-  }
-  clearInterval(intervalId);
-  startBtn.disabled = true;
   startTimer(selectedDate);
 });
