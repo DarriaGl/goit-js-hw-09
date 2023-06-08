@@ -62,15 +62,15 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
-
 startBtn.addEventListener('click', () => {
   const selectedDate = flatpickr('#datetime-picker').selectedDates[0];
-  if (!selectedDate) return;
-
+  if (!selectedDate || selectedDate < new Date()) {
+    Notiflix.Notify.warning('Please choose a valid date in the future');
+    return;
+  }
   clearInterval(intervalId);
   startBtn.disabled = true;
   startTimer(selectedDate);
