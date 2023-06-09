@@ -14,37 +14,34 @@ const options = {
       Notiflix.Notify.warning('Please choose a date in the future');
       return;
     }
-    const startBtn = document.querySelector('[data-start]');
     startBtn.disabled = false;
   },
 };
 
-flatpickr('#datetime-picker', options);
+const datePicker = flatpickr('#datetime-picker', options);
 
 const startBtn = document.querySelector('[data-start]');
 const daysElement = document.querySelector('[data-days]');
 const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
 const secondsElement = document.querySelector('[data-seconds]');
+const inputElement = document.querySelector('#datetime-picker');
 
 let intervalId;
 
 function startTimer(endTime) {
-  clearInterval(intervalId);
   const currentTime = new Date();
-  if (endTime <= currentTime) {
-    Notiflix.Notify.warning('Please choose a valid date in the future');
-    return;
-  }
 
   startBtn.disabled = true;
+  inputElement.disabled = true;
 
   intervalId = setInterval(() => {
     const timeDifference = endTime - new Date();
 
-    if (timeDifference <= 0) {
+    if (timeDifference <= 1000) {
       clearInterval(intervalId);
       startBtn.disabled = false;
+      inputElement.disabled = false;
       Notiflix.Notify.success('Countdown finished');
       return;
     }
@@ -74,8 +71,10 @@ function convertMs(ms) {
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
-
+document.addEventListener('DOMContentLoaded', () => {
+  startBtn.disabled = true;
+});
 startBtn.addEventListener('click', () => {
-  const selectedDate = flatpickr('#datetime-picker').selectedDates[0];
+  const selectedDate = datePicker.selectedDates[0];
   startTimer(selectedDate);
 });
